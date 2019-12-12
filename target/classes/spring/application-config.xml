@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!-- Uncomment and add your base-package here: <context:component-scan base-package="org.springframework.samples.service"/> -->
+	<context:component-scan
+		base-package="com.itwill.cryptoexchange" />
+	<!-- spring dataSource -->	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	 	<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://192.168.12.5:3306/crypto_currency_exchange?serverTimezone=UTC"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+	</bean>
+	
+	<!-- hibernate instance 생성 --> 
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"/>
+		<property name="packagesToScan" value="com.itwill.cryptoexchange"/>
+		<property name="hibernateProperties"> 
+			<props> 
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop> 
+				<prop key="hibernate.format_sql">true</prop> <prop key="hibernate.show_sql">true</prop><!-- 실행된 쿼리 출력 여부 --> 
+			</props> 
+		</property>
+
+	</bean>
+	<!-- Transaction Manager -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <!-- Annotation Transaction --> 
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>
